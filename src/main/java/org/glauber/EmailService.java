@@ -2,16 +2,12 @@ package org.glauber;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
-import java.io.IOException;
-
 public class EmailService {
-    public static void main(String[] args) throws IOException {
-
-        try (var consumer = new KafkaService(
-                EmailService.class.getSimpleName(),
-                "STORE_SEND_EMAIL",
-                new EmailService()::parse)) {
-            consumer.run();
+    public static void main(String[] args) {
+        var emailService = new EmailService();
+        try (var service = new KafkaService<>(
+                EmailService.class.getSimpleName(), "STORE_SEND_EMAIL", emailService::parse, String.class)) {
+            service.run();
         }
     }
 

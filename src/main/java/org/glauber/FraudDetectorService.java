@@ -5,29 +5,27 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import java.io.IOException;
 
 public class FraudDetectorService {
-    public static void main(String[] args) throws IOException {
-        try (var consumer = new KafkaService(
-                FraudDetectorService.class.getSimpleName(),
-                "STORE_NEW_ORDER",
-                new FraudDetectorService()::parse)) {
-            consumer.run();
+    public static void main(String[] args) {
+        var fraudService = new FraudDetectorService();
+        try (var service = new KafkaService<>(
+                FraudDetectorService.class.getSimpleName(), "STORE_NEW_ORDER", fraudService::parse, Order.class)) {
+            service.run();
         }
     }
 
-    private void parse(ConsumerRecord<String, String> record) {
+    private void parse(ConsumerRecord<String, Order> record) {
         System.out.println("----------------------------------------");
-        System.out.println("Sending email");
+        System.out.println("Processing new order, checking for fraud");
         System.out.println(record.key());
         System.out.println(record.value());
         System.out.println(record.partition());
         System.out.println(record.offset());
         try {
-            //noinspection BusyWait
-            Thread.sleep(1000);
+            Thread.sleep(3000);
         } catch (InterruptedException e) {
             // ignoring
             e.printStackTrace();
         }
-        System.out.println("Email sent");
+        System.out.println("Order processed");
     }
 }
