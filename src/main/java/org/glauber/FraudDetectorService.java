@@ -2,13 +2,16 @@ package org.glauber;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
-import java.io.IOException;
+import java.util.Map;
 
 public class FraudDetectorService {
     public static void main(String[] args) {
         var fraudService = new FraudDetectorService();
         try (var service = new KafkaService<>(
-                FraudDetectorService.class.getSimpleName(), "STORE_NEW_ORDER", fraudService::parse, Order.class)) {
+                FraudDetectorService.class.getSimpleName(),
+                "STORE_NEW_ORDER",
+                fraudService::parse, Order.class,
+                Map.of())) {
             service.run();
         }
     }
